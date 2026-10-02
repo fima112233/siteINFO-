@@ -1,0 +1,21 @@
+# Render blueprint — деплой siteINFO+
+# Использование: создай Web Service из этого репозитория.
+# Render сам раскачает зависимости и запустит команду ниже.
+services:
+  - type: web
+    name: siteinfo
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 8 --timeout 120 app:app"
+    envVars:
+      - key: PORT
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+        generateValue: true
+      # Админы через запятую: ADMIN_USERS=admin,root
+      - key: ADMIN_USERS
+        sync: false
+      - key: PROD
+        value: "1"

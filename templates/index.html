@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ user }}{% if user %} · {% endif %}siteINFO+</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head">
+      <span class="side-title">История</span>
+      <button class="btn mini" id="newChatBtn" title="Новый чат">＋</button>
+    </div>
+    <div class="side-list" id="convList">
+      {% for c in conversations %}
+        <div class="conv" data-cid="{{ c['id'] }}">
+          <div class="conv-name">Чат №{{ c['id'] }}</div>
+          <div class="conv-meta">{{ c['created_at'][:16].replace('T',' ') }}</div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="side-foot">
+      <span class="user-badge">{{ user }}</span>
+      <button class="btn mini" id="logoutBtn" title="Выйти">⏻</button>
+    </div>
+  </aside>
+
+  <main class="chat-pane">
+    <header class="chat-head">
+      <div class="head-title">CHAT <span class="head-note">все пробивы в одном чате</span></div>
+      <div class="head-controls">
+        <div class="scan-status" id="scanStatus" style="display:none"></div>
+      </div>
+    </header>
+
+    <div class="chat" id="chat">
+      <div id="log"></div>
+    </div>
+
+    <footer class="composer">
+      <input id="urlInput" type="text" placeholder="Вставь URL и нажми Enter — можно делать хоть сто пробивов…" autocomplete="off" spellcheck="false">
+      <button class="btn primary" id="goBtn">Пробить</button>
+    </footer>
+  </main>
+</div>
+
+<script>window.USERNAME = {{ user|tojson }};</script>
+<script>window.CURRENT_CID = {{ view_cid|default(None)|tojson }};</script>
+<script src="/static/app.js"></script>
+</body>
+</html>

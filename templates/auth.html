@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>siteINFO+ — вход</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+  body.auth-body{display:flex;align-items:center;justify-content:center;height:100vh;background:radial-gradient(900px 500px at 50% 20%,#13233d 0%,#0b0e14 60%)}
+  .auth-card{width:360px;padding:34px 32px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}
+  .auth-card h1{margin:0 0 4px;font-size:26px;color:var(--acc)}
+  .auth-sub{color:var(--mut);font-size:13px;margin-bottom:24px}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+  .field label{font-size:12.5px;color:var(--mut)}
+  .field input{background:var(--panel2);border:1px solid var(--line);border-radius:9px;color:var(--txt);padding:11px 13px;font-size:14px;outline:none}
+  .field input:focus{border-color:var(--acc)}
+  .auth-err{color:var(--err);font-size:12.5px;min-height:16px;margin-bottom:8px}
+  .auth-switch{font-size:12.5px;color:var(--mut);margin-top:16px;text-align:center}
+  .auth-switch a{color:var(--acc);cursor:pointer;text-decoration:none}
+  .btn.primary{width:100%;margin-top:6px}
+</style>
+</head>
+<body class="auth-body">
+  <div class="auth-card">
+    <h1>siteINFO+</h1>
+    <div class="auth-sub">рекон-чат: логин или регистрация</div>
+    <form id="authForm" autocomplete="off">
+      <div class="field">
+        <label for="username">Ник</label>
+        <input id="username" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Пароль</label>
+        <input id="password" type="password" autocomplete="current-password" required>
+      </div>
+      <div class="auth-err" id="authErr"></div>
+      <button class="btn primary" type="submit" id="authBtn">Войти</button>
+    </form>
+    <div class="auth-switch" id="authSwitch">Нет аккаунта? <a id="switchLink">Зарегистрироваться</a></div>
+  </div>
+<script src="/static/auth.js"></script>
+</body>
+</html>

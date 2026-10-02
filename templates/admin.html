@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>siteINFO+ — Админка</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+  .admin-body{height:100vh; display:flex; flex-direction:column}
+  .admin-top{display:flex;align-items:center;justify-content:space-between;padding:12px 22px;border-bottom:1px solid var(--line);background:rgba(13,17,25,.8)}
+  .admin-top .brand{font-weight:800;color:var(--acc);font-size:16px}
+  .admin-top .sub{color:var(--mut);font-size:12px;margin-left:10px}
+  .admin-top .right{display:flex;gap:10px;align-items:center}
+  .admin-main{flex:1;overflow-y:auto;padding:20px 24px;max-width:1200px;width:100%;margin:0 auto}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+  .stat-card{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--panel)}
+  .stat-card .num{font-size:26px;font-weight:800;color:var(--acc);font-family:var(--mono)}
+  .stat-card .lbl{font-size:12px;color:var(--mut);margin-top:4px}
+  .admin-flex{display:flex;gap:16px}
+  .panel{flex:1;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden}
+  .panel-head{padding:10px 14px;border-bottom:1px solid var(--line);font-weight:700;font-size:13px;color:var(--acc)}
+  .panel-body{overflow-y:auto;max-height:60vh;padding:4px 0}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line)}
+  th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px;position:sticky;top:0;background:var(--panel)}
+  tbody tr:hover{background:var(--panel2);cursor:pointer}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .badge.admin{background:rgba(62,198,255,.15);color:var(--acc)}
+  .badge.user{background:rgba(139,148,167,.15);color:var(--mut)}
+  .badge.on{background:rgba(65,224,138,.15);color:var(--ok)}
+  .badge.off{background:rgba(255,122,122,.15);color:var(--err)}
+  .badge.danger{background:rgba(255,100,100,.15);color:var(--err)}
+  .mini-btn{padding:4px 10px;font-size:11.5px;border:1px solid var(--line);border-radius:7px;background:var(--panel2);color:var(--txt);cursor:pointer}
+  .mini-btn:hover{border-color:var(--acc);color:var(--acc)}
+  .mini-btn.danger:hover{border-color:var(--err);color:var(--err)}
+  .msg-viewer{max-height:70vh;overflow-y:auto;padding:14px;font-family:var(--mono);font-size:12.5px;line-height:1.55}
+  .msg-viewer .kind{color:var(--mut);font-weight:700}
+  .msg-viewer .final{color:var(--ok)}
+  .msg-viewer .user{color:var(--acc)}
+  .msg-viewer pre{white-space:pre-wrap;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px;margin:4px 0 10px}
+  .loading{color:var(--mut);padding:30px;text-align:center}
+  .btn.primary.compact{padding:7px 14px;font-size:12.5px}
+  .tabs{display:flex;gap:6px;margin-bottom:16px}
+  .tab{padding:8px 16px;border-radius:9px;border:1px solid var(--line);cursor:pointer;font-size:13px;color:var(--mut)}
+  .tab.active{background:var(--acc);color:#fff;border-color:transparent}
+  .detail-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+  .detail-head h3{margin:0;font-size:15px}
+  .hidden{display:none}
+</style>
+</head>
+<body class="admin-body">
+<div class="admin-top">
+  <div><span class="brand">siteINFO+</span><span class="sub">панель администратора</span></div>
+  <div class="right">
+    <span class="user-badge">{{ user }}</span>
+    <a href="/" class="mini-btn">← к чату</a>
+    <button class="mini-btn" id="logoutBtn">выйти</button>
+  </div>
+</div>
+
+<div class="admin-main">
+  <div class="stat-grid" id="statGrid">
+    <div class="stat-card"><div class="num" id="sUsers">…</div><div class="lbl">пользователей</div></div>
+    <div class="stat-card"><div class="num" id="sAdmins">…</div><div class="lbl">админов</div></div>
+    <div class="stat-card"><div class="num" id="sActive">…</div><div class="lbl">активных</div></div>
+    <div class="stat-card"><div class="num" id="sConversations">…</div><div class="lbl">чатов</div></div>
+    <div class="stat-card"><div class="num" id="sMessages">…</div><div class="lbl">сообщений</div></div>
+    <div class="stat-card"><div class="num" id="sScans">…</div><div class="lbl">пробивов</div></div>
+    <div class="stat-card"><div class="num" id="sReports">…</div><div class="lbl">отчётов</div></div>
+    <div class="stat-card"><div class="num" id="sRunning">…</div><div class="lbl">идёт сейчас</div></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="users">Пользователи</div>
+    <div class="tab" data-tab="convs">Чаты</div>
+    <div class="tab" data-tab="viewer">Просмотр результатов</div>
+  </div>
+
+  <!-- users table -->
+  <div class="panel" id="panel-users">
+    <div class="panel-head">Пользователи</div>
+    <div class="panel-body">
+      <table>
+        <thead><tr><th>ID</th><th>Ник</th><th>Роль</th><th>Статус</th><th>Чаты</th><th>Пробивы</th><th>Создан</th><th>Вход</th><th>Действия</th></tr></thead>
+        <tbody id="usersBody"><tr><td colspan="9" class="loading">загрузка…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- conversations table -->
+  <div class="panel hidden" id="panel-convs">
+    <div class="panel-head">Чаты (последние 500)</div>
+    <div class="panel-body">
+      <table>
+        <thead><tr><th>ID</th><th>Пользователь</th><th>Сообщений</th><th>Пробивов</th><th>Создан</th><th></th></tr></thead>
+        <tbody id="convsBody"><tr><td colspan="6" class="loading">загрузка…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- detail viewer -->
+  <div class="panel hidden" id="panel-viewer">
+    <div class="detail-head">
+      <span style="display:flex;align-items:center;gap:10px">
+        <h3>Просмотр результатов</h3>
+        <span class="user-badge">выбери чат выше</span>
+      </span>
+      <button class="mini-btn" id="closeViewer">закрыть</button>
+    </div>
+    <div class="msg-viewer" id="viewerContent"><div class="loading">Нажми на чат в списке «Чаты», чтобы посмотреть его содержимое и результаты пробивов.</div></div>
+  </div>
+</div>
+
+<script src="/static/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+:root{
+  --bg:#0b0e14; --panel:#11151d; --panel2:#0f131a; --line:#1f2632;
+  --txt:#e6ebf2; --mut:#8b94a7; --acc:#3ec6ff; --ok:#41e08a; --err:#ff7a7a; --amber:#ffc46b;
+  --mono:ui-monospace,SFMono-Regular,Consolas,"Cascadia Code",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:radial-gradient(1200px 500px at 50% -10%,#12203a 0%,var(--bg) 60%);
+  color:var(--txt); font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  display:flex; flex-direction:column; height:100vh; overflow:hidden;
+}
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 22px; border-bottom:1px solid var(--line); background:rgba(13,17,25,.7); backdrop-filter:blur(6px);
+}
+.brand{display:flex; align-items:baseline; gap:14px}
+.logo{font-weight:800; font-size:20px; letter-spacing:.5px; color:var(--acc)}
+.tag{color:var(--mut); font-size:13px}
+.btn{border:1px solid var(--line); background:transparent; color:var(--txt); padding:8px 14px; border-radius:9px; cursor:pointer; font-size:13px; transition:.15s}
+.btn:hover{border-color:var(--acc); color:var(--acc)}
+.btn.primary{background:linear-gradient(135deg,#17a2ff,#0b78e8); color:#fff; font-weight:600}
+.btn.primary:hover{filter:brightness(1.12)}
+.btn:disabled{opacity:.5; cursor:not-allowed}
+
+.chat-wrap{flex:1; overflow-y:auto; padding:18px 0}
+.chat-pane .chat{flex:1; overflow-y:auto; max-width:100%; padding:18px 24px; display:flex; flex-direction:column; gap:10px}
+.intro{display:flex; justify-content:center; margin-top:6vh}
+.intro-card{text-align:center; max-width:520px; padding:34px 30px; border:1px solid var(--line); border-radius:18px; background:var(--panel)}
+.intro-ico{font-size:44px; margin-bottom:12px}
+.intro-card h2{font-size:20px; font-weight:700; margin-bottom:10px}
+.intro-card p{color:var(--mut); font-size:14px; line-height:1.6}
+.sample{margin-top:18px; font-size:13px; color:var(--mut)}
+.sample code{background:var(--panel2); border:1px solid var(--line); padding:3px 8px; border-radius:6px; color:var(--acc)}
+
+/* этап-строка */
+.msg{display:flex; gap:12px; align-items:flex-start; animation:in .25s ease}
+@keyframes in{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
+.msg .ico{flex:0 0 22px; height:22px; display:grid; place-items:center; font-size:12px; margin-top:3px}
+.stage .ico{color:var(--mut)}
+.ok .ico{color:var(--ok)}
+.err .ico{color:var(--err)}
+.block .ico{color:var(--amber)}
+.final .ico{color:var(--acc)}
+
+.msg .body{flex:1; min-width:0}
+.msg .ttl{font-family:var(--mono); font-size:12.5px; color:var(--mut); display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.msg .ttl .name{color:var(--txt); font-weight:600; font-size:13px}
+.msg .ttl .stamp{font-size:10.5px; color:#5b6577; margin-left:auto}
+.ok .ttl .name{color:var(--ok)}
+.stage .ttl .name{color:var(--mut); font-weight:500}
+.final .ttl .name{color:var(--acc)}
+
+.detail{margin-top:4px; font-family:var(--mono); font-size:12.5px; line-height:1.55; color:#c3cbda;
+  white-space:pre-wrap; word-break:break-word; background:var(--panel2); border:1px solid var(--line);
+  border-radius:10px; padding:10px 12px; max-width:100%; display:none}
+.detail.open{display:block}
+.summary{margin-top:2px; font-family:var(--mono); font-size:12.5px; color:#c3cbda; white-space:pre-wrap; word-break:break-word}
+.chev{color:#5b6577; cursor:pointer; font-size:10px; user-select:none}
+.chev:hover{color:var(--acc)}
+
+.err .detail{display:block; border-color:rgba(255,122,122,.25); color:#d99; background:rgba(255,90,90,.06)}
+.err .detail.open{display:block}
+
+.final{border:1px solid var(--line); border-radius:12px; background:linear-gradient(180deg,#0f1826,#0c1119); padding:2px 4px}
+.final .report{font-family:var(--mono); font-size:12.5px; line-height:1.55; white-space:pre-wrap; overflow-x:auto; max-height:56vh; overflow-y:auto; padding:14px 16px}
+.report::-webkit-scrollbar{width:8px}
+.report::-webkit-scrollbar-thumb{background:#26303f; border-radius:4px}
+
+/* блок «Думаю…» — свёрнутый по умолчанию */
+.msg.thinking{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:8px 12px}
+.msg.thinking .ico{color:var(--amber)}
+.msg.thinking .ttl{cursor:pointer; user-select:none}
+.msg.thinking .name{font-weight:700; font-size:13.5px; color:var(--amber)}
+.msg.thinking .chev{color:var(--mut); font-size:12px; width:14px; display:inline-block; transition:.15s}
+.msg.thinking:hover .chev{color:var(--acc)}
+.msg.thinking .counter{font-family:var(--mono); font-size:11px; color:var(--mut); background:var(--panel2);
+  border:1px solid var(--line); padding:2px 8px; border-radius:20px}
+.msg.thinking .cursor{color:var(--acc); animation:blink 1s steps(1) infinite; font-size:12px}
+@keyframes blink{50%{opacity:0}}
+.msg.thinking .detail{max-height:46vh; overflow-y:auto; margin-top:8px; padding:0; background:transparent; border:none}
+.msg.thinking .tline{display:flex; gap:8px; align-items:flex-start; padding:3px 0; border-top:1px dashed rgba(255,255,255,.04)}
+.msg.thinking .t-ico{flex:0 0 16px; text-align:center; font-size:11px; line-height:1.7}
+.msg.thinking .t-txt{font-family:var(--mono); font-size:12px; color:#c3cbda; word-break:break-word; white-space:pre-wrap}
+.msg.thinking .t-ico{font-size:12px}
+
+.typing{display:flex; gap:5px; padding:8px 34px}
+.typing .dot{width:7px;height:7px;border-radius:50%;background:var(--mut);animation:pulse 1.2s infinite}
+.typing .dot:nth-child(2){animation-delay:.2s}
+.typing .dot:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+.hidden{display:none !important}
+
+.composer{
+  display:flex; gap:10px; padding:14px 20px; border-top:1px solid var(--line); background:rgba(13,17,25,.9);
+  width:100%;
+}
+#urlInput{
+  flex:1; background:var(--panel); border:1px solid var(--line); border-radius:10px; color:var(--txt);
+  padding:12px 16px; font-size:14.5px; outline:none; transition:.15s; font-family:var(--mono);
+}
+#urlInput:focus{border-color:var(--acc); box-shadow:0 0 0 3px rgba(62,198,255,.12)}
+#urlInput::placeholder{color:#5b6577}
+
+/* ============ новый layout: сайдбар + чат ============ */
+.layout{display:flex; height:100vh; width:100%; overflow:hidden}
+
+.sidebar{width:260px; flex:0 0 260px; background:var(--panel); border-right:1px solid var(--line); display:flex; flex-direction:column}
+.side-head{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--line)}
+.side-title{font-weight:700; font-size:14px; letter-spacing:.5px; color:var(--acc)}
+.btn.mini{padding:4px 10px; font-size:14px; border-radius:8px}
+.side-list{flex:1; overflow-y:auto; padding:8px}
+.conv{display:flex; flex-direction:column; padding:10px 12px; border-radius:10px; cursor:pointer; margin-bottom:2px; border:1px solid transparent}
+.conv:hover{background:var(--panel2)}
+.conv.active{background:var(--panel2); border-color:var(--line)}
+.conv-name{font-size:13.5px; font-weight:600}
+.conv-meta{font-size:11px; color:var(--mut); margin-top:2px}
+.side-foot{display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-top:1px solid var(--line)}
+.user-badge{font-size:13px; color:var(--mut); font-family:var(--mono)}
+#logoutBtn{font-size:13px}
+
+.chat-pane{flex:1; display:flex; flex-direction:column; min-width:0}
+.chat-head{display:flex; align-items:center; justify-content:space-between; padding:12px 22px; border-bottom:1px solid var(--line); background:rgba(13,17,25,.7)}
+.head-title{font-weight:800; font-size:16px; color:var(--acc)}
+.head-note{font-weight:400; font-size:12px; color:var(--mut); margin-left:10px}
+.head-controls{display:flex; align-items:center; gap:10px}
+.scan-status{font-size:12.5px; color:var(--amber); font-family:var(--mono)}
+
+.btn.stop{background:var(--err); border-color:transparent; color:#fff; font-weight:700}
+.btn.stop:hover{filter:brightness(1.1); color:#fff; border-color:transparent}
+
+/* user-сообщение */
+.msg.user-msg .ico{color:var(--acc)}
+.msg.user-msg .ttl .name{color:var(--acc)}
+.user-url{font-family:var(--mono); font-weight:600; color:#fff; font-size:14px}
+
+/* ===== синее сообщение юзера (баблсправа, как в диалоге) ===== */
+.msg.user{display:flex; flex-direction:column; align-items:flex-end; margin:6px 0 2px}
+.user-bubble{
+  background:linear-gradient(135deg,#1a7dff,#0b6bdc); color:#fff;
+  padding:10px 16px; border-radius:18px 18px 4px 18px; max-width:70%;
+  font-family:var(--mono); font-size:14px; word-break:break-word; line-height:1.4;
+  box-shadow:0 3px 12px rgba(18,90,200,.25)
+}
+.bubble-stamp{font-size:10.5px; color:var(--mut); margin-top:3px; font-family:var(--mono)}
+
+/* ===== свёрнутый блок «Думаю…» со стрелкой ===== */
+.msg.thinking{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:8px 12px; margin:6px 0 14px}
+.msg.thinking .ico{color:var(--amber)}
+.msg.thinking .ttl{cursor:pointer; user-select:none; gap:8px}
+.msg.thinking .name{font-weight:700; font-size:13.5px; color:var(--amber)}
+.msg.thinking .chev{color:var(--mut); font-size:12px; width:14px; display:inline-block; transition:.15s}
+.msg.thinking:hover .chev{color:var(--acc)}
+.msg.thinking .counter{font-family:var(--mono); font-size:11px; color:var(--mut); background:var(--panel2); border:1px solid var(--line); padding:2px 8px; border-radius:20px}
+.msg.thinking .cursor{color:var(--acc); animation:blink 1s steps(1) infinite; font-size:12px}
+@keyframes blink{50%{opacity:0}}
+.msg.thinking .detail{max-height:46vh; overflow-y:auto; margin:8px 0 0; padding:0; background:transparent; border:none}
+.msg.thinking .tline{display:flex; gap:8px; align-items:flex-start; padding:3px 0; border-top:1px dashed rgba(255,255,255,.05)}
+.msg.thinking .t-ico{flex:0 0 16px; text-align:center; font-size:12px; line-height:1.7}
+.msg.thinking .t-txt{font-family:var(--mono); font-size:12px; color:#c3cbda; word-break:break-word; white-space:pre-wrap}
